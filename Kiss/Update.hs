@@ -3,7 +3,7 @@ module Kiss.Update (pkgUpdate, pkgHelpExt) where
 
 import Control.Monad (foldM, forM_, unless, when)
 import Data.IORef
-import System.Exit (ExitCode (..), exitWith)
+import System.Exit (ExitCode (..))
 import System.IO
 
 import Kiss.Env

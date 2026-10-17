@@ -71,7 +71,7 @@ pkgCache e name = do
   r <- pkgFindVersion e name Nothing
   let base = eBinDir e ++ "/" ++ name ++ "@" ++ rVer r ++ "-" ++ rRel r ++ ".tar."
       preferred = base ++ eCompress e
-  fallback <- fmap head (globIn base "*")
+  fallback <- fmap concat (fmap (take 1) (globIn base "*"))
   p <- isFile preferred
   if p then return (r, Just preferred) else do
     f <- isFile fallback

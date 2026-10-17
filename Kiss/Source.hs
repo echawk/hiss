@@ -8,7 +8,6 @@ module Kiss.Source
 import Control.Monad (foldM, forM, forM_, unless, when)
 import Data.List (isInfixOf, isPrefixOf, sortBy)
 import System.Exit (ExitCode (..), exitWith)
-import System.Process (StdStream (..))
 
 import Kiss.Env
 import Kiss.File

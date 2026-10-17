@@ -7,7 +7,7 @@ module Kiss.File
 
 import Control.Monad (filterM)
 import Numeric (showOct)
-import System.Exit (ExitCode (..), exitWith)
+import System.Exit (ExitCode (..))
 
 import Kiss.Env
 import Kiss.FS
@@ -21,7 +21,7 @@ fileRwx p = do
   (_, out) <- capture defSpec "ls" ["-ld", p]
   return (convert (drop 1 (take 10 out)))
   where
-    convert perms = go perms (zip [1 :: Int ..] [4, 2, 1, 4, 2, 1, 4, 2, 1]) "" 0
+    convert perms = go perms (zip [1 :: Int ..] [4, 2, 1, 4, 2, 1, 4, 2, 1 :: Int]) "" (0 :: Int)
     go _ [] oct _ = oct
     go rwx ((pos, v) : rest) oct o =
       let c = take 1 rwx
@@ -76,6 +76,7 @@ sh256 e fs0 = do
 odRender :: String -> String
 odRender bytes = concatMap line (chunks 0 bytes) ++ offset (length bytes) ++ "\n"
   where
+    chunks :: Int -> String -> [(Int, String)]
     chunks _ [] = []
     chunks n s = (n, take 16 s) : chunks (n + 16) (drop 16 s)
     line (n, cs) = offset n ++ concatMap field cs ++ "\n"

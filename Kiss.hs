@@ -4,13 +4,11 @@ module Kiss (dispatch, pkgListVersion) where
 
 import Control.Monad (forM_, unless, when)
 import Data.IORef
-import System.Exit (ExitCode (..), exitWith)
 import System.IO
 
 import Kiss.Alternatives
 import Kiss.Build
 import Kiss.Env
-import Kiss.FS
 import Kiss.Glob
 import Kiss.Install
 import Kiss.OS
@@ -87,7 +85,7 @@ dispatch e argv = do
   lvl <- getVar "_KISS_LVL"
   setVar "_KISS_LVL" (show (readInt lvl + 1))
   escalated <- if action `elem` ["a", "alternatives", "i", "install", "r", "remove"]
-                  && not (null (take 1 args) || null (head args))
+                  && not (null (concat (take 1 args)))
     then do
       (own, user) <- amOwner e (eRoot e ++ "/")
       if own then return False else do

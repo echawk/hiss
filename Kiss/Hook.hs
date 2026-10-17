@@ -9,7 +9,7 @@ import Control.Monad (forM_, unless, when)
 import Data.IORef
 import System.Directory (getCurrentDirectory, setCurrentDirectory)
 import System.Environment (getEnvironment)
-import System.Exit (ExitCode (..), exitWith)
+import System.Exit (ExitCode (..))
 import System.IO
 
 import Kiss.Env
@@ -24,7 +24,7 @@ runHook e args = do
   forM_ (splitColon hooks) $ \h -> do
     c <- run h args
     unless (c == ExitSuccess) $
-      die e (head (args ++ [""]) ++ " hook failed: '" ++ h ++ "'") ""
+      die e (concat (take 1 args) ++ " hook failed: '" ++ h ++ "'") ""
 
 -- | @run_hook_pkg HOOK PKG@: run an installed package's hook in a chroot.
 runHookPkg :: Env -> String -> String -> IO ()
@@ -35,10 +35,10 @@ runHookPkg e hook pkg = do
     then do
       log2 e pkg ("Running " ++ hook ++ " hook")
       me <- getVar "LOGNAME"
-      let cmd = [ "env", "KISS_ROOT=", "chroot"
-                , if null (eRoot e) then "/" else eRoot e
-                , stripPrefixOr (eRoot e) hp ]
-      c <- if me == "root" then run (head cmd) (tail cmd) else asUser e "root" cmd
+      let args = [ "KISS_ROOT=", "chroot"
+                 , if null (eRoot e) then "/" else eRoot e
+                 , stripPrefixOr (eRoot e) hp ]
+      c <- if me == "root" then run "env" args else asUser e "root" ("env" : args)
       check c
     else do
       f <- isFile hp
